@@ -27,8 +27,6 @@
           id="search-bar"
           placeholder="Search dreams..."
         ></sl-input>
-        <sl-select id="tag-filter" placeholder="Filter by tag" clearable>
-        </sl-select>
         <sl-select id="sort-buckets" placeholder="Sort by">
           <sl-option value="random">Random</sl-option>
           <sl-option value="rating-asc">Rating 1-5</sl-option>
@@ -105,6 +103,7 @@
           5★
         </label>
       </div>
+      <div id="tag-filter" class="tag-cloud"></div>
     </div>
     <p class="loading"><sl-spinner></sl-spinner> Loading...</p>
     <div id="buckets-list"></div>
