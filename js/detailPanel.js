@@ -95,7 +95,7 @@ function renderDetail(bucket) {
   const statusLabel = (bucket.status || "").replace(/_/g, " ").toLowerCase();
 
   panel.innerHTML = `
-    <h2>${cleanTitle}</h2>
+    <h2><a href="${DREAMS_URL}/${bucket.id}" target="_blank">${cleanTitle}</a></h2>
     <div class="detail-meta">
       <span><strong>Goal:</strong> ${bucket.minGoal}&ndash;${bucket.maxGoal} SEK</span>
       <span>${statusLabel}</span>
@@ -106,7 +106,7 @@ function renderDetail(bucket) {
     <p>${cleanSummary}</p>
     ${imagesHTML ? `<div class="detail-images">${imagesHTML}</div>` : ""}
     ${fieldsHTML}
-    <a class="detail-link" href="${DREAMS_URL}/${bucket.id}" target="_blank">View on Dreams &rarr;</a>
+    <a class="detail-link" href="${DREAMS_URL}/${bucket.id}?tab=comments" target="_blank">Comments &rarr;</a>
   `;
 
   panel.querySelector(".star-rating").addEventListener("click", (e) => {
