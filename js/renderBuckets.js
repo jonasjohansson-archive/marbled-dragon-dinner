@@ -1,6 +1,14 @@
 import { removeEmojis, escapeHtml } from "./domHelpers.js";
 import { Rating } from "./rating.js";
 
+// Use Cloudinary auto-format/quality and resize for card thumbnails
+function thumbUrl(url) {
+  if (!url) return "";
+  return url.replace("/upload/", "/upload/f_auto,q_auto,w_400,c_fill/");
+}
+
+let renderedCount = 0;
+
 export function renderBuckets(bucketsToRender) {
   const list = document.getElementById("buckets-list");
   const fragment = document.createDocumentFragment();
@@ -11,7 +19,10 @@ export function renderBuckets(bucketsToRender) {
     const tags = (bucket.tags || []).map((t) => t.value);
     const ratingValue = rating.get(bucketId);
     const cleanTitle = escapeHtml(removeEmojis(title || ""));
-    const coverImage = images?.[0]?.small || "";
+    const coverImage = thumbUrl(images?.[0]?.small || "");
+    // First 20 cards are eager (above the fold), rest are lazy
+    const loading = renderedCount < 20 ? "eager" : "lazy";
+    renderedCount++;
 
     const div = document.createElement("div");
     div.className = "bucket";
@@ -20,7 +31,7 @@ export function renderBuckets(bucketsToRender) {
     div.dataset.tags = tags.join(",");
 
     div.innerHTML = `
-      ${coverImage ? `<img class="bucket-cover" src="${coverImage}" alt="${cleanTitle}" loading="lazy" />` : ""}
+      ${coverImage ? `<img class="bucket-cover" src="${coverImage}" alt="${cleanTitle}" loading="${loading}" width="400" height="100" />` : ""}
       <div class="bucket-row">
         <div class="bucket-row-top">
           <h2>${cleanTitle}</h2>
