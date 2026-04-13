@@ -31,10 +31,13 @@ export function renderBuckets(bucketsToRender) {
 
     const ratingValue = rating.get(bucketId);
 
+    const tags = (bucket.tags || []).map(t => t.value);
+
     const div = document.createElement("div");
     div.className = "bucket";
     div.dataset.rating = ratingValue;
     div.dataset.bucketId = bucketId;
+    div.dataset.tags = tags.join(",");
 
     const customFieldsHTML = customFields
       .filter(
@@ -100,6 +103,7 @@ export function renderBuckets(bucketsToRender) {
               </a>
             </sl-tooltip>
           </div>
+          ${tags.length ? `<div class="tags">${tags.map(t => `<sl-badge variant="primary" pill>${escapeHtml(t)}</sl-badge>`).join(" ")}</div>` : ""}
       </header>
       <main>
         ${coverImage ? `<img class="cover" src="${coverImage}" alt="${cleanTitle}">` : ''}

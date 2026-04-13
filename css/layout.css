@@ -12,7 +12,8 @@
   font-size: medium;
 }
 
-.hidden {
+.hidden,
+.tag-hidden {
   display: none !important;
 }
 
