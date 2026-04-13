@@ -96,12 +96,19 @@ function selectDream(bucket, bucketEl) {
   renderDetail(bucket);
 }
 
+function getField(bucket, name) {
+  const f = bucket.customFields.find(
+    ({ customField }) => customField?.name?.toLowerCase() === name.toLowerCase()
+  );
+  return f?.value?.trim() || "";
+}
+
 function renderDetail(bucket) {
   const panel = document.getElementById("detail-panel");
   const tags = (bucket.tags || []).map((t) => t.value);
   const cleanTitle = escapeHtml(removeEmojis(bucket.title || ""));
-  const cleanSummary = escapeHtml(removeEmojis(bucket.summary || ""));
   const ratingValue = rating.get(bucket.id);
+  const statusLabel = (bucket.status || "").replace(/_/g, " ").toLowerCase();
 
   const imagesHTML = (bucket.images || [])
     .map((img) => `<img src="${img.small}" alt="${cleanTitle}" loading="lazy" />`)
@@ -109,8 +116,30 @@ function renderDetail(bucket) {
 
   const budgetItemsHTML = buildBudgetItemsHTML(bucket.budgetItems || []);
 
+  // Funding info
+  const fundingHTML = `
+    <div class="detail-funding">
+      <strong>${formatSEK(bucket.income)} kr</strong> funded of ${formatSEK(bucket.minGoal)} kr goal
+    </div>
+  `;
+
+  // Status + tags
+  const tagsHTML = tags.length
+    ? `<div class="detail-tags">${tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>`
+    : "";
+
+  // Camp
+  const camp = getField(bucket, "This dream belongs to camp:");
+  const campHTML = camp
+    ? `<div class="detail-field"><div class="detail-field-name">Camp</div><div class="detail-field-value">${escapeHtml(camp)}</div></div>`
+    : "";
+
+  // All custom fields in order, excluding camp (shown separately above)
+  const excludeFields = ["this dream belongs to camp:"];
   const fieldsHTML = bucket.customFields
-    .filter(({ value }) => value && value.trim())
+    .filter(({ customField, value }) =>
+      value?.trim() && !excludeFields.includes(customField?.name?.toLowerCase())
+    )
     .map(
       ({ customField, value }) => `
       <div class="detail-field">
@@ -121,22 +150,16 @@ function renderDetail(bucket) {
     )
     .join("");
 
-  const tagsHTML = tags.length
-    ? `<div class="detail-tags">${tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>`
-    : "";
-
-  const statusLabel = (bucket.status || "").replace(/_/g, " ").toLowerCase();
-
   panel.innerHTML = `
     <h2><a href="${DREAMS_URL}/${bucket.id}" target="_blank">${cleanTitle}</a></h2>
+    ${fundingHTML}
     <div class="detail-meta">
-      <span><strong>Goal:</strong> ${bucket.minGoal}&ndash;${bucket.maxGoal} SEK</span>
       <span>${statusLabel}</span>
       <span>&#x1F4AC; ${bucket.noOfComments}</span>
       ${starHTML(ratingValue)}
     </div>
     ${tagsHTML}
-    <p>${cleanSummary}</p>
+    ${campHTML}
     ${imagesHTML ? `<div class="detail-images">${imagesHTML}</div>` : ""}
     ${fieldsHTML}
     ${budgetItemsHTML}
