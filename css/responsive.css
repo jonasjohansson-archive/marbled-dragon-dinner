@@ -23,7 +23,6 @@
   nav select { width: 40%; }
 
   .tag-cloud {
-    max-height: 60px;
-    overflow-y: auto;
+    display: none;
   }
 }
