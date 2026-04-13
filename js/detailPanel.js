@@ -136,10 +136,10 @@ function renderDetail(bucket) {
       ${starHTML(ratingValue)}
     </div>
     ${tagsHTML}
-    ${budgetItemsHTML}
     <p>${cleanSummary}</p>
     ${imagesHTML ? `<div class="detail-images">${imagesHTML}</div>` : ""}
     ${fieldsHTML}
+    ${budgetItemsHTML}
   `;
 
   panel.querySelector(".star-rating").addEventListener("click", (e) => {
