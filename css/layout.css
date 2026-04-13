@@ -11,10 +11,11 @@
   flex: 1;
   overflow-y: auto;
   scrollbar-width: none;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 4px;
   min-width: 0;
+  align-content: start;
 }
 
 #buckets-list::-webkit-scrollbar {
@@ -22,7 +23,9 @@
 }
 
 #detail-panel {
-  flex: 1;
+  width: 500px;
+  max-width: 500px;
+  flex-shrink: 0;
   overflow-y: auto;
   scrollbar-width: none;
   background: white;

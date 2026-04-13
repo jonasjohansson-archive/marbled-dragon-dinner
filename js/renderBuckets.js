@@ -7,10 +7,11 @@ export function renderBuckets(bucketsToRender) {
   const rating = new Rating();
 
   bucketsToRender.forEach((bucket) => {
-    const { id: bucketId, title, noOfComments, minGoal, maxGoal } = bucket;
+    const { id: bucketId, title, noOfComments, minGoal, maxGoal, images } = bucket;
     const tags = (bucket.tags || []).map((t) => t.value);
     const ratingValue = rating.get(bucketId);
     const cleanTitle = escapeHtml(removeEmojis(title || ""));
+    const coverImage = images?.[0]?.small || "";
 
     const div = document.createElement("div");
     div.className = "bucket";
@@ -19,11 +20,16 @@ export function renderBuckets(bucketsToRender) {
     div.dataset.tags = tags.join(",");
 
     div.innerHTML = `
+      ${coverImage ? `<img class="bucket-cover" src="${coverImage}" alt="${cleanTitle}" loading="lazy" />` : ""}
       <div class="bucket-row">
-        <h2>${cleanTitle}</h2>
-        <span class="bucket-meta">${minGoal}–${maxGoal}</span>
-        <span class="bucket-meta">💬${noOfComments}</span>
-        <sl-rating class="rating" label="Rating" max="3" value="${ratingValue}"></sl-rating>
+        <div class="bucket-row-top">
+          <h2>${cleanTitle}</h2>
+          <sl-rating class="rating" label="Rating" max="3" value="${ratingValue}"></sl-rating>
+        </div>
+        <div class="bucket-meta-row">
+          <span class="bucket-meta">${minGoal}–${maxGoal}</span>
+          <span class="bucket-meta">💬${noOfComments}</span>
+        </div>
       </div>
     `;
 
