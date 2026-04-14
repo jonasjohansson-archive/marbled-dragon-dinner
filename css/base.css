@@ -22,7 +22,7 @@
   --pad: 0.5rem;
   --pad-lg: 1rem;
   --radius: 0;
-  --detail-width: 500px;
+  --detail-width: 640px;
 }
 
 *, *::before, *::after {
