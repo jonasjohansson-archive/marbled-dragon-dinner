@@ -24,27 +24,50 @@ export function removeEmojis(str = "") {
   );
 }
 
+let markedParse = null;
+
+export async function initMarkdown() {
+  const { marked } = await import("https://cdn.jsdelivr.net/npm/marked@15/lib/marked.esm.js");
+  marked.use({
+    renderer: {
+      // Open links in new tab, only allow http(s)
+      link({ href, text }) {
+        if (!/^https?:\/\//.test(href)) return text;
+        return `<a href="${href}" target="_blank">${text}</a>`;
+      },
+      // Keep images intact
+      image({ href, text }) {
+        return `<img src="${href}" alt="${escapeHtml(text || "")}" loading="lazy" />`;
+      },
+    },
+  });
+  markedParse = (md) => marked.parse(md);
+}
+
 export function cleanCustomFieldValue(value) {
-  // Escape HTML first to prevent XSS from user-submitted content
+  if (markedParse) {
+    // Strip bold wrapping if the entire value is wrapped in **...**
+    value = value.replace(/^\*\*([\s\S]*)\*\*$/gm, "$1");
+    // Remove [Image #N] placeholders
+    value = value.replace(/\[Image #\d+\]/gi, "");
+    return markedParse(value);
+  }
+
+  // Fallback if marked hasn't loaded yet
   value = escapeHtml(value);
-
-  // Strip bold wrapping if the entire value is wrapped in **...**
-  value = value.replace(/^\*\*([\s\S]*)\*\*$/gm, '$1');
-
-  // Process headings before replacing linebreaks (^ needs real newlines)
+  value = value.replace(/^\*\*([\s\S]*)\*\*$/gm, "$1");
   value = value
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>') // h3 tag
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>') // h2 tag
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>') // h1 tag
-    .replace(/\r\n|\r|\n/gim, '<br>') // linebreaks (after headings)
-    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>') // bold text
-    .replace(/__(.*?)__/gim, '<strong>$1</strong>') // bold text (underscores)
-    .replace(/\*(.*?)\*/gim, '<i>$1</i>') // italic text (asterisks)
-    .replace(/\b_(.*?)_\b/gim, '<i>$1</i>') // italic text (underscores)
+    .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+    .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+    .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+    .replace(/\r\n|\r|\n/gim, "<br>")
+    .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
+    .replace(/__(.*?)__/gim, "<strong>$1</strong>")
+    .replace(/\*(.*?)\*/gim, "<i>$1</i>")
+    .replace(/\b_(.*?)_\b/gim, "<i>$1</i>")
     .replace(/\[([^\[]+)\]\(((https?:\/\/)[^)]*)\)/gim, (_, text, url) =>
-      `<a href="${url.replace(/&amp;/g, '&')}" target="_blank">${text}</a>`) // anchor tags (only http/https)
-    .replace(/\[Image #\d+\]/gi, ''); // remove image placeholders
-
+      `<a href="${url.replace(/&amp;/g, "&")}" target="_blank">${text}</a>`)
+    .replace(/\[Image #\d+\]/gi, "");
   return value;
 }
 

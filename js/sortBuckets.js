@@ -48,11 +48,17 @@ export function sortBuckets(event) {
     case "budget-min-desc":
       bucketList.sort(compareBudgetMinAscOrder).reverse();
       break;
-    case "budget-max-asc":
-      bucketList.sort(compareBudgetMaxAscOrder);
+    case "requested-asc":
+      bucketList.sort(compareRequestedAscOrder);
       break;
-    case "budget-max-desc":
-      bucketList.sort(compareBudgetMaxAscOrder).reverse();
+    case "requested-desc":
+      bucketList.sort(compareRequestedAscOrder).reverse();
+      break;
+    case "selffunded-asc":
+      bucketList.sort(compareSelfFundedAscOrder);
+      break;
+    case "selffunded-desc":
+      bucketList.sort(compareSelfFundedAscOrder).reverse();
       break;
     case "rating-asc":
       sortByRating(bucketList, rating.getAllRatings(), true);
@@ -91,10 +97,16 @@ let compareCommentsAscOrder = function (a, b) {
   return a.noOfComments - b.noOfComments;
 };
 let compareBudgetMinAscOrder = function (a, b) {
-  return a.minGoal - b.minGoal;
+  return (a.minGoal + a.income) - (b.minGoal + b.income);
 };
 let compareBudgetMaxAscOrder = function (a, b) {
   return a.maxGoal - b.maxGoal;
+};
+let compareRequestedAscOrder = function (a, b) {
+  return a.minGoal - b.minGoal;
+};
+let compareSelfFundedAscOrder = function (a, b) {
+  return a.income - b.income;
 };
 function moveToStart(arr, from) {
   if (from < 0) return;

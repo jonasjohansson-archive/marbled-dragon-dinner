@@ -93,6 +93,7 @@ function selectDream(bucket, bucketEl) {
   const slug = slugify(removeEmojis(bucket.title || ""));
   history.replaceState(null, "", "#" + slug);
 
+  document.getElementById("detail-panel").classList.add("active");
   renderDetail(bucket);
 }
 
@@ -111,15 +112,23 @@ function renderDetail(bucket) {
   const statusLabel = (bucket.status || "").replace(/_/g, " ").toLowerCase();
 
   const imagesHTML = (bucket.images || [])
-    .map((img) => `<img src="${img.small}" alt="${cleanTitle}" loading="lazy" />`)
+    .map((img) => {
+      const full = img.small.replace(/\/c_scale,q_\d+,w_\d+\//, "/");
+      return `<a href="${full}" target="_blank"><img src="${img.small}" alt="${cleanTitle}" loading="lazy" /></a>`;
+    })
     .join("");
 
   const budgetItemsHTML = buildBudgetItemsHTML(bucket.budgetItems || []);
 
   // Funding info
+  const goalRange =
+    bucket.maxGoal && bucket.maxGoal !== bucket.minGoal
+      ? `${formatSEK(bucket.minGoal)}&ndash;${formatSEK(bucket.maxGoal)}`
+      : formatSEK(bucket.minGoal);
   const fundingHTML = `
     <div class="detail-funding">
-      <strong>${formatSEK(bucket.income)} kr</strong> funded of ${formatSEK(bucket.minGoal)} kr goal
+      <strong>Requesting ${goalRange} kr</strong>
+      ${bucket.income ? ` &middot; Self-funded: ${formatSEK(bucket.income)} kr` : ""}
     </div>
   `;
 
@@ -128,14 +137,15 @@ function renderDetail(bucket) {
     ? `<div class="detail-tags">${tags.map((t) => `<span>${escapeHtml(t)}</span>`).join("")}</div>`
     : "";
 
-  // Camp
-  const camp = getField(bucket, "This dream belongs to camp:");
-  const campHTML = camp
-    ? `<div class="detail-field"><div class="detail-field-name">Camp</div><div class="detail-field-value">${escapeHtml(camp)}</div></div>`
-    : "";
+  // Camp — show name in meta row
+  const campRaw = getField(bucket, "This dream belongs to camp:");
+  const campName = campRaw ? campRaw.split("\n")[0].replace(/\*+/g, "").trim() : "";
 
   // All custom fields in order, excluding camp (shown separately above)
-  const excludeFields = ["this dream belongs to camp:"];
+  const excludeFields = [
+    "this dream belongs to camp:",
+    "designated dr. bill-bull (treasurer of the dream)",
+  ];
   const fieldsHTML = bucket.customFields
     .filter(({ customField, value }) =>
       value?.trim() && !excludeFields.includes(customField?.name?.toLowerCase())
@@ -155,11 +165,11 @@ function renderDetail(bucket) {
     ${fundingHTML}
     <div class="detail-meta">
       <span>${statusLabel}</span>
+      ${campName ? `<span>${escapeHtml(campName)}</span>` : ""}
       <span>&#x1F4AC; ${bucket.noOfComments}</span>
       ${starHTML(ratingValue)}
     </div>
     ${tagsHTML}
-    ${campHTML}
     ${imagesHTML ? `<div class="detail-images">${imagesHTML}</div>` : ""}
     ${fieldsHTML}
     ${budgetItemsHTML}

@@ -30,6 +30,11 @@ main {
   padding: var(--pad-lg);
   font-size: var(--font-md);
   line-height: 1.6;
+  display: none;
+}
+
+#detail-panel.active {
+  display: block;
 }
 
 #detail-panel::-webkit-scrollbar {

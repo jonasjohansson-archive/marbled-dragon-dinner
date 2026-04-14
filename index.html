@@ -25,20 +25,28 @@
       <input type="search" id="search-bar" placeholder="Search dreams..." />
       <select id="sort-buckets">
         <option value="random">Random</option>
-        <option value="rating-asc">Rating 1-3</option>
-        <option value="rating-desc">Rating 3-1</option>
-        <option value="name-asc">Name A-Z</option>
-        <option value="name-desc">Name Z-A</option>
-        <option value="fund-percent-asc">Least funded %</option>
-        <option value="fund-percent-desc">Most funded %</option>
-        <option value="fund-asc">Least funded SEK</option>
-        <option value="fund-desc">Most funded SEK</option>
-        <option value="funders-asc">Least funders</option>
-        <option value="funders-desc">Most funders</option>
-        <option value="comments-asc">Least comments</option>
-        <option value="comments-desc">Most comments</option>
-        <option value="budget-min-asc">Smallest budget</option>
-        <option value="budget-min-desc">Biggest budget</option>
+        <optgroup label="General">
+          <option value="name-asc">Name A–Z</option>
+          <option value="name-desc">Name Z–A</option>
+          <option value="rating-desc">Rating high–low</option>
+          <option value="rating-asc">Rating low–high</option>
+          <option value="comments-desc">Most comments</option>
+          <option value="comments-asc">Least comments</option>
+        </optgroup>
+        <optgroup label="Budget">
+          <option value="requested-desc">Most requested</option>
+          <option value="requested-asc">Least requested</option>
+          <option value="selffunded-desc">Most self-funded</option>
+          <option value="selffunded-asc">Least self-funded</option>
+          <option value="budget-min-desc">Biggest total budget</option>
+          <option value="budget-min-asc">Smallest total budget</option>
+        </optgroup>
+        <optgroup label="Funding">
+          <option value="fund-percent-desc">Most funded %</option>
+          <option value="fund-percent-asc">Least funded %</option>
+          <option value="funders-desc">Most funders</option>
+          <option value="funders-asc">Least funders</option>
+        </optgroup>
       </select>
 
       <fieldset class="rating-filter">
@@ -56,9 +64,7 @@
 
     <main>
       <section id="buckets-list"></section>
-      <aside id="detail-panel">
-        <p class="detail-placeholder">Select a dream to read more</p>
-      </aside>
+      <aside id="detail-panel"></aside>
     </main>
   </body>
 </html>

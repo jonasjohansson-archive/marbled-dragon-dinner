@@ -108,6 +108,27 @@
   margin-bottom: 2px;
 }
 
+#detail-panel .detail-field-value p {
+  margin-bottom: 0.5em;
+}
+
+#detail-panel .detail-field-value p:last-child {
+  margin-bottom: 0;
+}
+
+#detail-panel .detail-field-value ul,
+#detail-panel .detail-field-value ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+#detail-panel .detail-field-value blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 0.75em;
+  margin: 0.5em 0;
+  color: var(--text-muted);
+}
+
 #detail-panel .detail-field-value {
   font-size: var(--font-md);
   line-height: 1.6;
